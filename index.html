@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <title>Projeto Frutiger - V 1.4.5</title>
+    <title>Projeto Frutiger - V 1.4.6</title>
     
     <link rel="icon" href="https://img.icons8.com/emoji/48/leaf-fluttering-in-wind.png" type="image/png">
 
@@ -31,11 +31,12 @@
             user-select: none;
         }
 
+        /* REFORÇO DO FUNDO FRUTIGER ANTI-ERRO */
         body.frutiger-mode {
-            background-color: #0080ff !important;
+            background-color: #4facfe !important; /* Cor de fundo caso a imagem falhe */
             background-image: 
-                linear-gradient(135deg, rgba(79, 172, 254, 0.8) 0%, rgba(0, 242, 254, 0.8) 100%), 
-                url('https://lh3.googleusercontent.com/d/107Y1IIA7qieLaIQEYSbGw6bg0UvI1nmr') !important;
+                linear-gradient(135deg, rgba(79, 172, 254, 0.9) 0%, rgba(0, 242, 254, 0.9) 100%), 
+                url('https://api.dicebear.com/7.x/identicon/svg?seed=frutiger&backgroundColor=4facfe') !important; /* Placeholder estável */
             background-repeat: no-repeat !important;
             background-position: center center !important;
             background-attachment: fixed !important;
@@ -81,27 +82,16 @@
         
         #filtroGeral { padding-left: 35px; width: 220px; }
 
-        /* NOVO VISUAL EM BLOCO UNICO */
         table { width: 100%; border-collapse: separate; border-spacing: 0 15px; table-layout: fixed; }
         th { font-size: 0.75rem; text-transform: uppercase; text-align: left; opacity: 0.7; padding: 0 15px 5px 15px; }
         
-        /* Cada TR agora é um retângulo só */
         tbody tr { 
             background: #000 !important; 
             border-radius: 15px; 
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            overflow: hidden;
         }
         
-        td { 
-            padding: 18px 15px; 
-            font-size: 0.88rem; 
-            text-align: left; 
-            color: #fff; 
-            border: none;
-        }
-
-        /* Arredonda só as pontas do "retângulo" */
+        td { padding: 18px 15px; font-size: 0.88rem; text-align: left; color: #fff; border: none; }
         td:first-child { border-radius: 15px 0 0 15px; }
         td:last-child { border-radius: 0 15px 15px 0; }
         
@@ -123,11 +113,7 @@
 
 <div class="sidebar">
     <h3 id="sidebarTitle">Frutiger Eco</h3>
-    
-    <div id="themeToggleContainer">
-        <button id="themeBtn" class="theme-btn" onclick="toggleTheme()">☾</button>
-    </div>
-
+    <div id="themeToggleContainer"><button id="themeBtn" class="theme-btn" onclick="toggleTheme()">☾</button></div>
     <div class="sidebar-divider"></div>
     <div class="sidebar-item active" onclick="navegar(this, 'Pedidos de Peça')">Pedidos de Peça</div>
     <div class="sidebar-divider"></div>
@@ -139,15 +125,12 @@
     <div class="sidebar-divider"></div>
     <div class="sidebar-item" onclick="navegar(this, 'Erros de Apontamento')">Erros de Apontamento</div>
     <div class="sidebar-divider"></div>
-
     <div class="log-container">
         <span class="log-title">HISTÓRICO RECENTE</span>
-        <div style="margin-bottom: 4px;"><b>V 1.4.5</b>: Layout em Bloco Único (Retângulo).</div>
-        <div style="margin-bottom: 4px;"><b>V 1.4.4</b>: Trava anti-modo-escuro.</div>
-        <div style="margin-bottom: 4px;"><b>V 1.4.3</b>: Reforço anti-fundo-branco.</div>
+        <div style="margin-bottom: 4px;"><b>V 1.4.6</b>: Fundo de emergência anti-erro.</div>
+        <div style="margin-bottom: 4px;"><b>V 1.4.5</b>: Layout em Bloco Único.</div>
     </div>
-
-    <div class="version-footer">V 1.4.5</div>
+    <div class="version-footer">V 1.4.6</div>
 </div>
 
 <div class="main-content">
@@ -155,17 +138,13 @@
         <h2 id="mainTitle" onclick="toggleFrutiger()">Frutiger Project Cloud</h2>
         <div id="subtituloAba" style="font-weight: bold; color: #4caf50;">Pedidos de Peça</div>
         <div class="header-divider"></div>
-        
         <div id="tableView">
             <div class="form-group">
                 <div id="formInputs" style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;"></div>
                 <button class="add-btn" id="btnAdd" onclick="adicionar()">ADICIONAR</button>
                 <input type="text" id="filtroGeral" placeholder="⌕ FILTRAR..." onkeyup="filtrarGeral()">
             </div>
-            <table id="tabelaDados">
-                <thead id="cabecalhoTabela"></thead>
-                <tbody></tbody>
-            </table>
+            <table id="tabelaDados"><thead id="cabecalhoTabela"></thead><tbody></tbody></table>
         </div>
     </div>
 </div>
@@ -223,7 +202,6 @@
         const form = document.getElementById('formInputs');
         const head = document.getElementById('cabecalhoTabela');
         form.innerHTML = ''; head.innerHTML = '';
-        
         const colunas = configAbas[abaAtual];
         colunas.forEach((col, index) => {
             if(abaAtual === 'Montados' && col === 'STATUS') {
@@ -231,33 +209,27 @@
                 head.appendChild(th);
                 return;
             }
-
             let input = document.createElement('input');
             input.type = (col.includes('DATA') || col.includes('ENTREGA')) ? 'date' : 'text';
             input.id = `in-${col}`;
             input.placeholder = col;
             input.style.width = "130px";
-            
             input.addEventListener('keydown', (e) => {
                 if(e.key === 'Enter') {
                     e.preventDefault();
                     let proximoIndex = index + 1;
                     if(abaAtual === 'Montados' && colunas[proximoIndex] === 'STATUS') proximoIndex++;
-                    
                     if(proximoIndex < colunas.length) {
                         const nextCol = colunas[proximoIndex];
-                        if(document.getElementById(`in-${nextCol}`)) {
-                            document.getElementById(`in-${nextCol}`).focus();
-                        } else { adicionar(); }
-                    } else { adicionar(); }
+                        if(document.getElementById(`in-${nextCol}`)) document.getElementById(`in-${nextCol}`).focus();
+                        else adicionar();
+                    } else adicionar();
                 }
             });
-
             form.appendChild(input);
             const th = document.createElement('th'); th.innerText = col;
             head.appendChild(th);
         });
-
         const thAcao = document.createElement('th'); thAcao.innerText = 'AÇÃO'; thAcao.style.width = '130px';
         head.appendChild(thAcao);
         ouvirDadosNuvem();
@@ -271,23 +243,17 @@
                 const item = doc.data();
                 let tr = document.createElement('tr');
                 tr.id = `row-${doc.id}`;
-
                 configAbas[abaAtual].forEach(col => {
                     let td = document.createElement('td');
                     let valor = item[col] || '-';
                     td.innerText = (col.includes('DATA') || col.includes('ENTREGA')) ? formatarDataBR(valor) : valor;
                     td.setAttribute('data-col', col);
-                    
                     if(td.innerText === 'OK') td.className = 'txt-ok';
                     if(td.innerText === 'ATRASADO') td.className = 'txt-atrasado';
                     tr.appendChild(td);
                 });
-
                 let tdAcao = document.createElement('td');
-                tdAcao.innerHTML = `
-                    <button class="btn-action edit-btn" onclick="toggleEdit('${doc.id}')">✎</button>
-                    <button class="btn-action del-btn" onclick="deletarLinha('${doc.id}')">X</button>
-                `;
+                tdAcao.innerHTML = `<button class="btn-action edit-btn" onclick="toggleEdit('${doc.id}')">✎</button><button class="btn-action del-btn" onclick="deletarLinha('${doc.id}')">X</button>`;
                 tr.appendChild(tdAcao);
                 tbody.appendChild(tr);
                 filtrarGeral();
@@ -299,13 +265,10 @@
         const tr = document.getElementById(`row-${id}`);
         const btn = tr.querySelector('.edit-btn');
         const isEditing = tr.classList.toggle('editing');
-
         if (isEditing) {
             btn.innerText = '✓';
             tr.querySelectorAll('td[data-col]').forEach(td => {
-                if(!(abaAtual === 'Montados' && td.getAttribute('data-col') === 'STATUS')) {
-                    td.contentEditable = "true";
-                }
+                if(!(abaAtual === 'Montados' && td.getAttribute('data-col') === 'STATUS')) td.contentEditable = "true";
             });
         } else {
             btn.innerText = '✎';
@@ -321,33 +284,24 @@
     async function adicionar() {
         let novoItem = { timestamp: firebase.firestore.FieldValue.serverTimestamp() };
         let valido = true;
-        
         configAbas[abaAtual].forEach(col => {
             if(abaAtual === 'Montados' && col === 'STATUS') return;
             let el = document.getElementById(`in-${col}`);
             if(!el.value) valido = false;
             novoItem[col] = el.value.toUpperCase();
         });
-
         if(!valido) return alert("PREENCHA TUDO!");
-
         if(abaAtual === 'Montados') {
-            const dataMontagem = document.getElementById('in-DATA').value;
-            const entregaInterna = document.getElementById('in-ENTREGA INTERNA').value;
-            novoItem['STATUS'] = (dataMontagem > entregaInterna) ? 'ATRASADO' : 'OK';
+            const dataM = document.getElementById('in-DATA').value;
+            const entregaI = document.getElementById('in-ENTREGA INTERNA').value;
+            novoItem['STATUS'] = (dataM > entregaI) ? 'ATRASADO' : 'OK';
         }
-
         await db.collection(abaAtual).add(novoItem);
-        configAbas[abaAtual].forEach(col => {
-            const el = document.getElementById(`in-${col}`);
-            if(el) el.value = '';
-        });
+        configAbas[abaAtual].forEach(col => { if(document.getElementById(`in-${col}`)) document.getElementById(`in-${col}`).value = ''; });
         document.getElementById(`in-${configAbas[abaAtual][0]}`).focus();
     }
 
-    async function deletarLinha(id) {
-        if(confirm("EXCLUIR PERMANENTEMENTE?")) await db.collection(abaAtual).doc(id).delete();
-    }
+    async function deletarLinha(id) { if(confirm("EXCLUIR PERMANENTEMENTE?")) await db.collection(abaAtual).doc(id).delete(); }
 
     function toggleFrutiger() {
         document.body.classList.toggle('frutiger-mode');
@@ -369,9 +323,7 @@
 
     function filtrarGeral() {
         const busca = document.getElementById('filtroGeral').value.toLowerCase();
-        document.querySelectorAll('#tabelaDados tbody tr').forEach(row => {
-            row.style.display = row.innerText.toLowerCase().includes(busca) ? '' : 'none';
-        });
+        document.querySelectorAll('#tabelaDados tbody tr').forEach(row => { row.style.display = row.innerText.toLowerCase().includes(busca) ? '' : 'none'; });
     }
 
     renderizarInterface();
