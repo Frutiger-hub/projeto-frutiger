@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Projeto Frutiger - V 1.5.5</title>
+    <title>Projeto Frutiger - V 1.7.3</title>
     
     <link rel="icon" href="https://img.icons8.com/emoji/48/leaf-fluttering-in-wind.png" type="image/png">
 
@@ -26,14 +26,16 @@
         /* MODO FRUTIGER */
         body.frutiger-mode {
             background-color: #4facfe !important;
+            /* LINK ATUALIZADO VIA POSTIMAGES (DIRETO) */
             background-image: 
                 linear-gradient(135deg, rgba(79, 172, 254, 0.4) 0%, rgba(0, 242, 254, 0.4) 100%), 
-                url('https://lh3.googleusercontent.com/u/0/d/107Y1IIA7qieLaIQEYSbGw6bg0UvI1nmr=w1920-h1080-iv1') !important; 
+                url('https://i.postimg.cc/yDJDBrHk/frutiger-bg.jpg') !important; 
             background-repeat: no-repeat !important;
             background-position: center center !important;
             background-attachment: fixed !important;
             background-size: cover !important; 
             color: #fff !important;
+            image-rendering: -webkit-optimize-contrast;
         }
 
         /* SIDEBAR */
@@ -121,12 +123,12 @@
 
     <div class="log-container">
         <strong style="color: #4caf50; font-size: 0.75rem;">HISTÓRICO</strong><br>
-        <b>V 1.5.5</b>: Corrigido Editar, Tema e Ícone.<br>
-        <b>V 1.5.4</b>: Imagem Drive e Bolhas.<br>
-        <b>V 1.5.3</b>: Cores restauradas.
+        <b>V 1.7.3</b>: Link atualizado para PostImages.<br>
+        <b>V 1.7.1</b>: Correção de nitidez da imagem.<br>
+        <b>V 1.6.0</b>: Enter pula campos/adiciona.
     </div>
 
-    <div style="margin-top: auto; text-align: center; opacity: 0.3; font-size: 0.7rem;">V 1.5.5</div>
+    <div style="margin-top: auto; text-align: center; opacity: 0.3; font-size: 0.7rem;">V 1.7.3</div>
 </div>
 
 <div class="main-content">
@@ -136,7 +138,7 @@
         
         <div style="display:flex; gap:10px; margin-bottom:25px; justify-content:center; flex-wrap:wrap;">
             <div id="formInputs" style="display:flex; gap:10px; flex-wrap:wrap;"></div>
-            <button onclick="adicionar()" style="background:#4caf50; color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer;">ADICIONAR</button>
+            <button id="btnAdd" onclick="adicionar()" style="background:#4caf50; color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer;">ADICIONAR</button>
             <input type="text" id="filtroGeral" placeholder="⌕ FILTRAR..." onkeyup="filtrarGeral()">
         </div>
 
@@ -193,12 +195,26 @@
         const head = document.getElementById('cabecalhoTabela');
         form.innerHTML = ''; head.innerHTML = '';
         
-        configAbas[abaAtual].forEach(col => {
+        const cols = configAbas[abaAtual];
+        cols.forEach((col, index) => {
             if(abaAtual === 'Montados' && col === 'STATUS') return;
             let input = document.createElement('input');
             input.type = (col.includes('DATA') || col.includes('ENTREGA')) ? 'date' : 'text';
             input.id = `in-${col}`;
             input.placeholder = col;
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    let proximo = cols[index + 1];
+                    if (proximo && document.getElementById(`in-${proximo}`)) {
+                        document.getElementById(`in-${proximo}`).focus();
+                    } else {
+                        adicionar();
+                    }
+                }
+            });
+
             form.appendChild(input);
             
             let th = document.createElement('th');
@@ -260,9 +276,11 @@
 
     async function adicionar() {
         let novoItem = { timestamp: firebase.firestore.FieldValue.serverTimestamp() };
-        configAbas[abaAtual].forEach(col => {
+        let primeiroInput = null;
+        configAbas[abaAtual].forEach((col, index) => {
             if(col === 'STATUS' && abaAtual === 'Montados') return;
             const el = document.getElementById(`in-${col}`);
+            if (index === 0) primeiroInput = el;
             novoItem[col] = el.value.toUpperCase();
             el.value = '';
         });
@@ -272,6 +290,7 @@
             novoItem['STATUS'] = (dt > ent) ? 'ATRASADO' : 'OK';
         }
         await db.collection(abaAtual).add(novoItem);
+        if(primeiroInput) primeiroInput.focus();
     }
 
     async function deletar(id) { if(confirm("EXCLUIR?")) await db.collection(abaAtual).doc(id).delete(); }
