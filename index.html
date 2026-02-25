@@ -2,12 +2,13 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
     
-    <title>Projeto Frutiger - V 1.4.3</title>
+    <title>Projeto Frutiger - V 1.4.5</title>
     
     <link rel="icon" href="https://img.icons8.com/emoji/48/leaf-fluttering-in-wind.png" type="image/png">
 
@@ -15,6 +16,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
     <style>
+        :root { color-scheme: light dark; }
         * { box-sizing: border-box; transition: all 0.4s ease; -webkit-tap-highlight-color: transparent; }
 
         ::-webkit-scrollbar { width: 8px; }
@@ -29,7 +31,6 @@
             user-select: none;
         }
 
-        /* FIX DO FUNDO FRUTIGER */
         body.frutiger-mode {
             background-color: #0080ff !important;
             background-image: 
@@ -39,15 +40,10 @@
             background-position: center center !important;
             background-attachment: fixed !important;
             background-size: cover !important; 
-            color: #fff;
+            color: #fff !important;
         }
 
-        body.dark-mode { background: #121212; color: #ffffff; }
-        body.dark-mode.frutiger-mode { 
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
-                url('https://lh3.googleusercontent.com/d/107Y1IIA7qieLaIQEYSbGw6bg0UvI1nmr') !important; 
-        }
+        body.dark-mode { background: #121212 !important; color: #ffffff !important; }
         
         .sidebar { width: 250px; height: 100vh; display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; z-index: 20; background: #fff; border-right: 1px solid #ddd; }
         body.dark-mode .sidebar { background: #1e1e1e; border-right: 1px solid #333; }
@@ -85,18 +81,37 @@
         
         #filtroGeral { padding-left: 35px; width: 220px; }
 
-        table { width: 100%; border-collapse: separate; border-spacing: 12px 8px; table-layout: fixed; }
-        th { font-size: 0.75rem; text-transform: uppercase; text-align: left; opacity: 0.7; padding-left: 5px; }
+        /* NOVO VISUAL EM BLOCO UNICO */
+        table { width: 100%; border-collapse: separate; border-spacing: 0 15px; table-layout: fixed; }
+        th { font-size: 0.75rem; text-transform: uppercase; text-align: left; opacity: 0.7; padding: 0 15px 5px 15px; }
         
-        td { padding: 14px; font-size: 0.85rem; text-align: left; border-radius: 10px; background: #000 !important; color: #fff; border: 1px solid rgba(255,255,255,0.1); }
+        /* Cada TR agora é um retângulo só */
+        tbody tr { 
+            background: #000 !important; 
+            border-radius: 15px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
         
-        .editing { background: #222 !important; border: 1px solid #4caf50 !important; }
+        td { 
+            padding: 18px 15px; 
+            font-size: 0.88rem; 
+            text-align: left; 
+            color: #fff; 
+            border: none;
+        }
+
+        /* Arredonda só as pontas do "retângulo" */
+        td:first-child { border-radius: 15px 0 0 15px; }
+        td:last-child { border-radius: 0 15px 15px 0; }
+        
+        .editing { background: #222 !important; outline: 2px solid #4caf50; }
         .txt-atrasado { color: #ff5252 !important; font-weight: bold; }
         .txt-ok { color: #4caf50 !important; font-weight: bold; }
         
-        .btn-action { border: none; border-radius: 6px; cursor: pointer; padding: 6px 12px; font-weight: bold; margin-left: 5px; font-size: 1rem; }
-        .del-btn { background: rgba(255, 82, 82, 0.15); color: #ff5252; border: 1px solid #ff5252; }
-        .edit-btn { background: rgba(76, 175, 80, 0.15); color: #4caf50; border: 1px solid #4caf50; }
+        .btn-action { border: none; border-radius: 6px; cursor: pointer; padding: 8px 12px; font-weight: bold; margin-left: 5px; font-size: 1rem; }
+        .del-btn { background: rgba(255, 82, 82, 0.2); color: #ff5252; border: 1px solid #ff5252; }
+        .edit-btn { background: rgba(76, 175, 80, 0.2); color: #4caf50; border: 1px solid #4caf50; }
         
         .bubble { position: absolute; background: rgba(255, 255, 255, 0.4); border-radius: 50%; pointer-events: none; animation: float linear infinite; z-index: 1; }
         @keyframes float { from { transform: translateY(0); opacity: 0.6; } to { transform: translateY(-100vh); opacity: 0; } }
@@ -127,12 +142,12 @@
 
     <div class="log-container">
         <span class="log-title">HISTÓRICO RECENTE</span>
+        <div style="margin-bottom: 4px;"><b>V 1.4.5</b>: Layout em Bloco Único (Retângulo).</div>
+        <div style="margin-bottom: 4px;"><b>V 1.4.4</b>: Trava anti-modo-escuro.</div>
         <div style="margin-bottom: 4px;"><b>V 1.4.3</b>: Reforço anti-fundo-branco.</div>
-        <div style="margin-bottom: 4px;"><b>V 1.4.2</b>: Status Automático (Data vs Entrega).</div>
-        <div style="margin-bottom: 4px;"><b>V 1.4.1</b>: Fix Status Montados.</div>
     </div>
 
-    <div class="version-footer">V 1.4.3</div>
+    <div class="version-footer">V 1.4.5</div>
 </div>
 
 <div class="main-content">
