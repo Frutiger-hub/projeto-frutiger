@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Projeto Frutiger - V 1.4.0</title>
+    <title>Projeto Frutiger - V 1.4.1</title>
     
     <link rel="icon" href="https://img.icons8.com/emoji/48/leaf-fluttering-in-wind.png" type="image/png">
 
@@ -173,10 +173,10 @@
 
     <div class="log-container">
         <strong style="color: #4caf50; display: block; margin-bottom: 5px;">HISTORY</strong>
-        <b>V 1.4.0</b>: Enter inteligente e Bloqueio de Duplicados.<br>
-        <b>V 1.3.0</b>: Duplo Clique e Limpeza Filtro.
+        <b>V 1.4.1</b>: O.S. como primeiro campo.<br>
+        <b>V 1.4.0</b>: Enter inteligente e Bloqueio de Duplicados.
     </div>
-    <div class="version-text" style="text-align: center; opacity: 0.4; font-size: 0.7rem; font-weight: bold;">V 1.4.0</div>
+    <div class="version-text" style="text-align: center; opacity: 0.4; font-size: 0.7rem; font-weight: bold;">V 1.4.1</div>
 </div>
 
 <div class="main-content">
@@ -232,10 +232,10 @@
     const mesesNomes = ['JAN', 'FEV', 'MAR', 'ABR', 'MAI', 'JUN', 'JUL', 'AGO', 'SET', 'OUT', 'NOV', 'DEZ'];
 
     const configAbas = {
-        'Pedidos de Peça': ['DATA', 'CLIENTE', 'O.S.', 'STATUS'],
+        'Pedidos de Peça': ['O.S.', 'DATA', 'CLIENTE', 'STATUS'],
         'Montados': ['O.S.', 'DATA', 'CLIENTE', 'MONTADOR', 'ENTREGA INTERNA', 'STATUS'],
-        'Aprovados': ['DATA', 'CLIENTE', 'O.S.', 'STATUS'],
-        'Analisados': ['DATA', 'O.S.', 'CLIENTE', 'ORÇAMENTISTA'],
+        'Aprovados': ['O.S.', 'DATA', 'CLIENTE', 'STATUS'],
+        'Analisados': ['O.S.', 'DATA', 'CLIENTE', 'ORÇAMENTISTA'],
         'Erros de Apontamento': ['O.S.', 'ERRO', 'QUEM CAUSOU', 'DATA']
     };
 
@@ -300,7 +300,6 @@
             input.id = `in-${col}`;
             input.placeholder = col;
             
-            // FUNÇÃO ENTER: VAI PRO PRÓXIMO OU ADICIONA
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     const allInputs = Array.from(form.querySelectorAll('input'));
@@ -396,7 +395,6 @@
 
         if(vazio) { alert("Preencha todos os campos!"); return; }
 
-        // BLOQUEIO DE DUPLICADO
         const jaExiste = dadosCompletos.some(item => {
             return configAbas[abaAtual].every(col => {
                 if(col === 'STATUS' && abaAtual === 'Montados') return true;
@@ -415,7 +413,6 @@
 
         await db.collection(abaAtual).add(novoItem);
         
-        // Limpa e volta pro primeiro campo
         inputs.forEach(i => i.value = '');
         if(inputs[0]) inputs[0].focus();
     }
