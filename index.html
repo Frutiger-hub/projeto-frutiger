@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Projeto Frutiger - V 1.4.1</title>
+    <title>Projeto Frutiger - V 1.4.3</title>
     
     <link rel="icon" href="https://img.icons8.com/emoji/48/leaf-fluttering-in-wind.png" type="image/png">
 
@@ -35,6 +35,7 @@
             color: #fff !important;
         }
 
+        /* SIDEBAR E COMPONENTES */
         body.frutiger-mode .glass-container h2,
         body.frutiger-mode #corpoTabela td,
         body.frutiger-mode #cabecalhoTabela th,
@@ -49,7 +50,6 @@
             text-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
         }
 
-        /* SIDEBAR */
         .sidebar { 
             width: 70px; height: 100vh; display: flex; flex-direction: column; 
             padding: 25px 0; flex-shrink: 0; z-index: 100; 
@@ -110,8 +110,6 @@
         }
         .clear-chip:hover { background: #ff5252; color: white; }
 
-        body.light-mode #floating-months { background: rgba(255, 255, 255, 0.95); color: #333; }
-
         #themeBtn { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: inherit; }
 
         input { 
@@ -127,19 +125,28 @@
         body.light-mode .glass-container { background: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
         body.frutiger-mode .glass-container { background: rgba(255, 255, 255, 0.18); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.2); }
 
+        /* # ESTILO AERO: Botões com efeito de vidro estilo Windows 7 */
+        .btn-action {
+            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 50%, rgba(0,0,0,0.1) 100%); 
+            border: 1px solid rgba(255,255,255,0.3); 
+            border-radius: 8px; cursor: pointer; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.4); 
+            width: 38px; height: 38px; display: inline-flex; align-items: center; justify-content: center; margin: 0 3px;
+        }
+        .btn-action:hover {
+            background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.2) 100%);
+            transform: translateY(-1px); border-color: rgba(255,255,255,0.6);
+        }
+
         #corpoTabela td { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 10px 15px; font-size: 0.85rem; }
         #relogio-container { position: absolute; top: 15px; right: 20px; text-align: right; }
         #relogio { font-size: 1.4rem; font-weight: 700; letter-spacing: -1px; }
         #data-atual { font-size: 0.8rem; font-weight: 500; margin-top: 5px; opacity: 0.9; }
 
-        .btn-action { background: rgba(128,128,128,0.1); border: none; padding: 6px 10px; border-radius: 8px; cursor: pointer; color: inherit; margin: 0 2px; }
-        
         .pagination-container { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; padding: 10px; }
         .page-btn { background: #4caf50; color: white; border: none; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
         .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        
         #contador-info { font-size: 0.75rem; font-weight: bold; color: #4caf50; margin-bottom: 4px; text-transform: uppercase; }
-
         .log-container { margin-top: auto; margin-bottom: 15px; background: rgba(0,0,0,0.15); border-radius: 12px; padding: 12px; font-size: 0.7rem; }
     </style>
 </head>
@@ -173,10 +180,10 @@
 
     <div class="log-container">
         <strong style="color: #4caf50; display: block; margin-bottom: 5px;">HISTORY</strong>
-        <b>V 1.4.1</b>: O.S. como primeiro campo.<br>
-        <b>V 1.4.0</b>: Enter inteligente e Bloqueio de Duplicados.
+        <b>V 1.4.3</b>: Botões Aero Glass + Blindagem de Segurança.<br>
+        <b>V 1.4.1</b>: O.S. como primeiro campo.
     </div>
-    <div class="version-text" style="text-align: center; opacity: 0.4; font-size: 0.7rem; font-weight: bold;">V 1.4.1</div>
+    <div class="version-text" style="text-align: center; opacity: 0.4; font-size: 0.7rem; font-weight: bold;">V 1.4.3</div>
 </div>
 
 <div class="main-content">
@@ -213,8 +220,9 @@
 </div>
 
 <script>
+    // # FIREBASE: Configurações de acesso à nuvem (Blindadas no Google Cloud)
     const firebaseConfig = {
-        apiKey: "AiZaSyA4AFbehMGUY0D0-j5hIjLcalhirQYLCN4",
+        apiKey: "AIzaSyA4AFbehMGUY0D0-j5hIjLcalhirQYlCN4",
         authDomain: "projeto-frutiger.firebaseapp.com",
         projectId: "projeto-frutiger",
         storageBucket: "projeto-frutiger.firebasestorage.app",
@@ -238,6 +246,13 @@
         'Analisados': ['O.S.', 'DATA', 'CLIENTE', 'ORÇAMENTISTA'],
         'Erros de Apontamento': ['O.S.', 'ERRO', 'QUEM CAUSOU', 'DATA']
     };
+
+    // # SEGURANÇA: Limpa textos para evitar injeção de códigos maliciosos
+    function limparTexto(texto) {
+        const temp = document.createElement('div');
+        temp.textContent = texto;
+        return temp.innerHTML.toUpperCase().trim();
+    }
 
     function initMeses() {
         const grid = document.getElementById('month-chips-grid');
@@ -349,6 +364,7 @@
         renderizarTabela(dadosExibidos);
     }
 
+    // # TABELA V 1.4.3: Atualizada com ícones Fluency e botões Aero
     function renderizarTabela(dados) {
         const tbody = document.getElementById('corpoTabela');
         tbody.innerHTML = '';
@@ -368,8 +384,13 @@
             });
             let tdAcao = document.createElement('td');
             tdAcao.style.textAlign = "center";
-            tdAcao.innerHTML = `<button class="btn-action" onclick="toggleEdit('${item.id}')">✎</button>
-                               <button class="btn-action" onclick="deletar('${item.id}')">✕</button>`;
+            tdAcao.innerHTML = `
+                <button class="btn-action" onclick="toggleEdit('${item.id}')" title="Editar">
+                    <img src="https://img.icons8.com/fluency/22/edit.png"/>
+                </button>
+                <button class="btn-action" onclick="deletar('${item.id}')" title="Excluir">
+                    <img src="https://img.icons8.com/fluency/22/trash.png"/>
+                </button>`;
             tr.appendChild(tdAcao);
             tbody.appendChild(tr);
         });
@@ -378,6 +399,7 @@
     function mudarPagina(dir) { paginaAtual += dir; aplicarFiltroEPaginacao(); }
     function formatarDataBR(dataStr) { if(!dataStr || !dataStr.includes('-')) return dataStr; const [ano, mes, dia] = dataStr.split('-'); return `${dia}/${mes}/${ano}`; }
     
+    // # ADICIONAR: Envia dados limpos para o Firebase
     async function adicionar() {
         let novoItem = { timestamp: firebase.firestore.FieldValue.serverTimestamp() };
         let inputs = [];
@@ -386,7 +408,7 @@
         configAbas[abaAtual].forEach(col => {
             const el = document.getElementById(`in-${col}`);
             if(el) {
-                let val = el.value.toUpperCase().trim();
+                let val = limparTexto(el.value);
                 if(!val) vazio = true;
                 novoItem[col] = val;
                 inputs.push(el);
@@ -402,32 +424,29 @@
             });
         });
 
-        if(jaExiste) {
-            alert("Erro: Esse registro já foi adicionado!");
-            return;
-        }
+        if(jaExiste) { alert("Erro: Esse registro já foi adicionado!"); return; }
 
         if(abaAtual === 'Montados') {
             novoItem['STATUS'] = (novoItem['DATA'] > novoItem['ENTREGA INTERNA']) ? 'ATRASADO' : 'OK';
         }
 
         await db.collection(abaAtual).add(novoItem);
-        
         inputs.forEach(i => i.value = '');
         if(inputs[0]) inputs[0].focus();
     }
 
+    // # EDITAR: Alterna entre visualização e edição direta na tabela
     function toggleEdit(id) {
         const tr = document.getElementById(`row-${id}`);
         const isEditing = tr.classList.toggle('editing');
         const btn = tr.querySelector('.btn-action');
         if (isEditing) {
-            btn.innerText = '✓';
+            btn.innerHTML = '<img src="https://img.icons8.com/fluency/22/checkmark.png"/>';
             tr.querySelectorAll('td[data-col]').forEach(td => {
                 if(!td.innerText.includes('/') || td.getAttribute('data-col').indexOf('DATA') === -1) td.contentEditable = true;
             });
         } else {
-            btn.innerText = '✎';
+            btn.innerHTML = '<img src="https://img.icons8.com/fluency/22/edit.png"/>';
             let updates = {};
             tr.querySelectorAll('td[data-col]').forEach(td => {
                 td.contentEditable = false;
